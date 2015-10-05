@@ -11,9 +11,9 @@ public class ParametricTriangle {
 	
 	public static final float INCREASED_FACTOR = 1f;
 
-	Point3f pointA;
-	Point3f pointB;
-	Point3f pointC;
+	protected Point3f pointA;
+	protected Point3f pointB;
+	protected Point3f pointC;
 	
 	float minX;
 	float maxX;
@@ -69,7 +69,7 @@ public class ParametricTriangle {
 	}
 
 
-	private void drawColors(Graphics g) {
+	protected void drawColors(Graphics g) {
 		// init the storage variable
 		float currentX = 0.0f;
 		float currentY = 0.0f;
@@ -88,13 +88,11 @@ public class ParametricTriangle {
 				gamma = distance(tempPoint3f, pointA, pointC)/bToAC;
 				beta = 1 - alpha - gamma;
 				
-				// if the point is inside the triangle, we set the pixel
-				if(isInsideTriangle(tempPoint3f) && 
-						alpha > 0.0 && alpha < 1.0 &&
-						gamma > 0.0 && gamma < 1.0 &&
-						beta > 0.0 && beta < 1.0){
-					setPixel(g, (int)currentX, (int)currentY, alpha, gamma, beta);
+				// if the one of RGB is smaller than 0, ignore it
+				if(alpha < 0.0 || gamma < 0.0 || beta < 0.0 ){
+					continue;
 				}
+				setPixel(g, (int)currentX, (int)currentY, alpha, gamma, beta);
 			}
 		}
 	}
@@ -118,22 +116,6 @@ public class ParametricTriangle {
 		}
 	}
 	
-	// formula: http://www.cnblogs.com/zhonghan/archive/2012/07/20/1446730.html
-	private boolean isInsideTriangle(Point3f checkedPoint) {
-        float abc = triangleArea(pointA, pointB, pointC);
-        float abp = triangleArea(pointA, pointB, checkedPoint);
-        float acp = triangleArea(pointA, pointC, checkedPoint);
-        float bcp = triangleArea(pointB, pointC, checkedPoint);
-        return (abc == (abp + acp + bcp));
-    }
-	
-	// return the area of this triangle
-	private float triangleArea(Point3f a, Point3f b, Point3f c) {
-        float result = (float) Math.abs((a.x * b.y + b.x * c.y + c.x * a.y - b.x * a.y
-                - c.x * b.y - a.x * c.y) / 2.0D);
-        return result;
-    }
-
 	// I have implemented this method to adapt Swings coordinate system
 	public void setPixel(Graphics g, int x, int y, float R, float G, float B) {
 
@@ -148,11 +130,12 @@ public class ParametricTriangle {
 	// get the distance between a point to a line
 	public float distance(Point3f checkedPoint, Point3f beginP,
 			Point3f endP) {
-		Vector3f vectorA = new Vector3f(checkedPoint.x - beginP.x, checkedPoint.y - beginP.y, checkedPoint.z - beginP.z);
-		Vector3f vectorB = new Vector3f(endP.x - beginP.x, endP.y - beginP.y, endP.z - beginP.z);
-		Vector3f vectorC = vectorB.byScalar((float)(vectorA.dot(vectorB)/vectorB.dot(vectorB)));
-		Vector3f vectorE = vectorA.minusVector(vectorC);
-		return vectorE.length();
+		// calculate normal of the line
+		Vector3f vectorA = new Vector3f(endP.x-beginP.x, endP.y-beginP.y, 0);
+		Vector3f vectorN = vectorA.normal();
+		// caculate the vector of the checked point and the start point
+		Vector3f vectorV = new Vector3f(checkedPoint.x-beginP.x, checkedPoint.y-beginP.y, 0);
+		return (vectorN.dot(vectorV)/vectorN.length());
 	}
 
 }

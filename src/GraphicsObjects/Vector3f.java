@@ -76,13 +76,11 @@ public class Vector3f {
 	}
 
 	// vector's normal is a vector
-	// use x, y, z of vector divide the length individully
+	// only consider x, y right now
 	public Vector3f normal() {
-		float length = length();
 		Vector3f vector3f = new Vector3f();
-		vector3f.x = this.x / length;
-		vector3f.y = this.y / length;
-		vector3f.z = this.z / length;
+		vector3f.x = -this.y;
+		vector3f.y = this.x;
 		return vector3f;
 	}
 

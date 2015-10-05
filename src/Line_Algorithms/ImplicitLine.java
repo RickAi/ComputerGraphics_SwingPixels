@@ -6,7 +6,7 @@ import GraphicsObjects.Point3f;
 import GraphicsObjects.Vector3f;
 
 public class ImplicitLine {
-	
+
 	public static final float LINE_WIDTH = 2.0f;
 
 	Point3f startPoint;
@@ -24,25 +24,27 @@ public class ImplicitLine {
 		float endX = endPoint.x;
 		float startY = startPoint.y;
 		float endY = endPoint.y;
-		
+
 		// use two loops to set the pixels according to the width
-		for(float currentX = startX; currentX < endX; currentX++){
-			for(float currentY = startY; currentY < endY; currentY++){
-				if(Math.abs(distance(new Point3f(currentX, currentY, 0), startPoint, endPoint)) < LINE_WIDTH/2){
-					setPixel(g, (int)currentX, (int)currentY);
+		for (float currentX = startX; currentX < endX; currentX++) {
+			for (float currentY = startY; currentY < endY; currentY++) {
+				if (Math.abs(distance(new Point3f(currentX, currentY, 0),
+						startPoint, endPoint)) < LINE_WIDTH / 2) {
+					setPixel(g, (int) currentX, (int) currentY);
 				}
 			}
 		}
 	}
-	 
+
 	// get the checked point distance to the begin and end points
-	// formula: http://blog.csdn.net/tracing/article/details/46563383
-	public static float distance(Point3f checkedPoint, Point3f beginP, Point3f endP) {
-		Vector3f vectorA = new Vector3f(checkedPoint.x - beginP.x, checkedPoint.y - beginP.y, checkedPoint.z - beginP.z);
-		Vector3f vectorB = new Vector3f(endP.x - beginP.x, endP.y - beginP.y, endP.z - beginP.z);
-		Vector3f vectorC = vectorB.byScalar((float)(vectorA.dot(vectorB)/vectorB.dot(vectorB)));
-		Vector3f vectorE = vectorA.minusVector(vectorC);
-		return vectorE.length();
+	public float distance(Point3f checkedPoint, Point3f beginP, Point3f endP) {
+		// calculate normal of the line
+		Vector3f vectorA = new Vector3f(endP.x - beginP.x, endP.y - beginP.y, 0);
+		Vector3f vectorN = vectorA.normal();
+		// caculate the vector of the checked point and the start point
+		Vector3f vectorV = new Vector3f(checkedPoint.x - beginP.x,
+				checkedPoint.y - beginP.y, 0);
+		return (vectorN.dot(vectorV) / vectorN.length());
 	}
 
 	// I have implemented this method to adapt Swings coordinate system

@@ -10,6 +10,8 @@ import GraphicsObjects.Point3f;
 import Line_Algorithms.ExplicitLine;
 import Line_Algorithms.ImplicitLine;
 import Line_Algorithms.ParametricLine;
+import Triangle_Algorithms.HouseRectangle;
+import Triangle_Algorithms.HouseTriangle;
 import Triangle_Algorithms.ParametricTriangle;
 
 /*
@@ -18,6 +20,9 @@ import Triangle_Algorithms.ParametricTriangle;
  * 
  */
 public class Drawing2D extends JPanel {
+	
+	public static final float WINDOWS_INTERN = 5.0f;
+	public static final float WINDOWS_WIDTH = 40f;
 
 	public Drawing2D() // set up graphics window
 	{
@@ -88,13 +93,75 @@ public class Drawing2D extends JPanel {
 //		ThirdLine.drawLine(g);
 //		FourthLine.drawLine(g);
 
-		ParametricTriangle MyFirstTriangle = new ParametricTriangle(new Point3f(200, 0, 0), new Point3f(400,200, 0),
-				new Point3f(200, 370, 0));
-
-		 MyFirstTriangle.drawTriangle(g);
+//		ParametricTriangle MyFirstTriangle = new ParametricTriangle(new Point3f(200, 0, 0), new Point3f(400,200, 0),
+//				new Point3f(200, 370, 0));
+//
+//		 MyFirstTriangle.drawTriangle(g);
 		
 		//insert your house drawings here 
+		drawHouse(g);
 
+	}
+
+	private void drawHouse(Graphics g) {
+		// draw the roof
+		HouseTriangle roofTriangle = new HouseTriangle(new Point3f(-350, 200, 0), new Point3f(350, 200, 0), new Point3f(0, 400, 0));
+		roofTriangle.setColor(new Color(0, 127, 255));
+		roofTriangle.drawTriangle(g);
+		
+		// draw the house base
+		HouseTriangle baseTriangleUp = new HouseTriangle(new Point3f(-350, 195, 0), new Point3f(350, 195, 0), new Point3f(350, -100, 0));
+		HouseTriangle baseTriangleDown = new HouseTriangle(new Point3f(-350, 195, 0), new Point3f(350, -100, 0), new Point3f(-350, -100, 0));
+		HouseRectangle baseRectangle = new HouseRectangle(baseTriangleUp, baseTriangleDown, new Color(0, 127, 255));
+		baseRectangle.drawRectangle(g);
+		
+		// draw the door
+		HouseTriangle doorTriangleUp = new HouseTriangle(new Point3f(100, 80, 0), new Point3f(210, 80, 0), new Point3f(210, -100, 0));
+		HouseTriangle doorTriangleDown = new HouseTriangle(new Point3f(100, 80, 0), new Point3f(100, -100, 0), new Point3f(210, -100, 0));
+		HouseRectangle doorRectangle = new HouseRectangle(doorTriangleUp, doorTriangleDown, new Color(227, 15, 0));
+		doorRectangle.drawRectangle(g);
+		
+		// draw the base windows
+		drawWindows(g, new Point3f(-200, 80, 0));
+		// draw the roof windows
+		drawWindows(g, new Point3f(150, 300, 0));
+		
+		
+	}
+
+	private void drawWindows(Graphics g, Point3f leftUpPoint) {
+		float leftX = leftUpPoint.x;
+		float middleX1 = leftX - WINDOWS_WIDTH;
+		float middleX2 = middleX1 - WINDOWS_INTERN;
+		float rightX = middleX2 - WINDOWS_WIDTH;
+		float upY = leftUpPoint.y;
+		float middleY1 = upY - WINDOWS_WIDTH;
+		float middleY2 = middleY1 - WINDOWS_INTERN;
+		float downY = middleY2 - WINDOWS_WIDTH;
+		
+		// Left up window
+		HouseTriangle leftUpWindowTriUp = new HouseTriangle(new Point3f(leftX, upY, 0), new Point3f(middleX1, upY, 0), new Point3f(middleX1, middleY1, 0));
+		HouseTriangle leftUpWindowTriDown = new HouseTriangle(new Point3f(leftX, upY, 0), new Point3f(leftX, middleY1, 0), new Point3f(middleX1, middleY1, 0));
+		HouseRectangle leftUpWindowRect = new HouseRectangle(leftUpWindowTriUp, leftUpWindowTriDown, new Color(227, 15, 0));
+		leftUpWindowRect.drawRectangle(g);
+		
+		// Right up window
+		HouseTriangle rightUpWindowTriUp = new HouseTriangle(new Point3f(middleX2, upY, 0), new Point3f(rightX, upY, 0), new Point3f(rightX, middleY1, 0));
+		HouseTriangle rightUpWindowTriDown = new HouseTriangle(new Point3f(middleX2, upY, 0), new Point3f(middleX2, middleY1, 0), new Point3f(rightX, middleY1, 0));
+		HouseRectangle rightUpWindowRect = new HouseRectangle(rightUpWindowTriUp, rightUpWindowTriDown, new Color(227, 15, 0));
+		rightUpWindowRect.drawRectangle(g);
+		
+		// Left down window
+		HouseTriangle leftDownWindowTriUp = new HouseTriangle(new Point3f(leftX, middleY2, 0), new Point3f(middleX1, middleY2, 0), new Point3f(middleX1, downY, 0));
+		HouseTriangle leftDownWindowTriDown = new HouseTriangle(new Point3f(leftX, middleY2, 0), new Point3f(leftX, downY, 0), new Point3f(middleX1, downY, 0));
+		HouseRectangle leftDownWindowRect = new HouseRectangle(leftDownWindowTriUp, leftDownWindowTriDown, new Color(227, 15, 0));
+		leftDownWindowRect.drawRectangle(g);
+		
+		// Right down window
+		HouseTriangle rightDownWindowTriUp = new HouseTriangle(new Point3f(middleX2, middleY2, 0), new Point3f(rightX, middleY2, 0), new Point3f(rightX, downY, 0));
+		HouseTriangle rightDownWindowTriDown = new HouseTriangle(new Point3f(middleX2, middleY2, 0), new Point3f(middleX2, downY, 0), new Point3f(rightX, downY, 0));
+		HouseRectangle rightDownWindowRect = new HouseRectangle(rightDownWindowTriUp, rightDownWindowTriDown, new Color(227, 15, 0));
+		rightDownWindowRect.drawRectangle(g);
 	}
 
 	public static void main(String[] args) {
